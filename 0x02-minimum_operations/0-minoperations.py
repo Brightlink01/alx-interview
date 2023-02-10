@@ -27,4 +27,3 @@ def ops(n: int) -> int:
         else:
             op += 1
     return sum
-
