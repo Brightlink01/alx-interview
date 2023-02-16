@@ -25,7 +25,6 @@ def log_parsing():
 
             File = line.split()
             count += 1
-
             try:
                 fsize += int(File[-1])
             except Exception:
