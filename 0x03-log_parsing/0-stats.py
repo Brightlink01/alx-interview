@@ -1,48 +1,46 @@
 #!/usr/bin/python3
-"""
-module contains a script that reads stdin line by line and computes metrics
-"""
+""" reads from std """
 import sys
 
 
-status_codes = {
-    "200": 0,
-    "301": 0,
-    "400": 0,
-    "401": 0,
-    "403": 0,
-    "404": 0,
-    "405": 0,
-    "500": 0
-}
-
-file_size = 0
+def print_status(sdict, fsize):
+    """ prints format """
+    print("File size: {}".format(fsize))
+    for key in sorted(sdict.keys()):
+        if sdict[key] != 0:
+            print("{}: {}".format(key, sdict[key]))
 
 
-def print_metrics():
-    """prints of the logs"""
-    print("File size: {}".format(file_size))
-    for status in sorted(status_codes.keys()):
-        if status_codes[status]:
-            print("{}: {}".format(status, status_codes[status]))
-
-
-if __name__ == "__main__":
+def log_parsing():
+    """ print logs"""
     count = 0
+    fsize = 0
+    status_dict = {'200': 0, '301': 0, '400': 0, '401': 0,
+                   '403': 0, '404': 0, '405': 0, '500': 0}
+
     try:
         for line in sys.stdin:
+            if count != 0 and count % 10 == 0:
+                print_status(status_dict, fsize)
+
+            File = line.split()
+            count += 1
+
             try:
-                elems = line.split()
-                file_size += int(elems[-1])
-                if elems[-2] in status_codes:
-                    status_codes[elems[-2]] += 1
+                fsize += int(File[-1])
             except Exception:
                 pass
-            if count == 9:
-                print_metrics()
-                count = -1
-            count += 1
+            try:
+                if File[-2] in status_dict.keys():
+                    status = File[-2]
+                    status_dict[status] += 1
+            except Exception:
+                pass
+        print_status(status_dict, fsize)
+
     except KeyboardInterrupt:
-        print_metrics()
+        print_status(status_dict, fsize)
         raise
-    print_metrics()
+
+
+log_parsing()
